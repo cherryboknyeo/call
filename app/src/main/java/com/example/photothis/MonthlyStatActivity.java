@@ -12,7 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.github.mikephil.charting.charts.HorizontalBarChart;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -34,7 +34,7 @@ import java.util.Calendar;
 public class MonthlyStatActivity extends AppCompatActivity {
 
     private Spinner yearSpinner;
-    private HorizontalBarChart barChart; // HorizontalBarChart 사용
+    private BarChart barChart; // BarChart 사용
     private int selectedYear;
     private DatabaseReference databaseReference;
 
@@ -109,7 +109,7 @@ public class MonthlyStatActivity extends AppCompatActivity {
                 }
 
                 for (int i = 0; i < monthCounts.length; i++) {
-                    entries.add(new BarEntry(i + 1, monthCounts[i]));
+                    entries.add(new BarEntry(i, monthCounts[i])); // i는 0부터 시작
                 }
 
                 BarDataSet barDataSet = new BarDataSet(entries, "Monthly Stats");
@@ -118,7 +118,7 @@ public class MonthlyStatActivity extends AppCompatActivity {
                 barDataSet.setDrawValues(false);
 
                 BarData barData = new BarData(barDataSet);
-                barData.setBarWidth(0.8f);
+                barData.setBarWidth(0.4f); // 막대의 폭 조절
 
                 barChart.setData(barData);
                 barChart.invalidate();
@@ -137,20 +137,21 @@ public class MonthlyStatActivity extends AppCompatActivity {
         // XAxis 설정 (월 레이블)
         XAxis xAxis = barChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // X축을 아래쪽에 배치
-        xAxis.setGranularity(1f);
+        xAxis.setGranularity(1f); // 1 단위로 눈금 표시
         xAxis.setGranularityEnabled(true);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(getMonthLabels()));
         xAxis.setLabelCount(12, true);
         xAxis.setLabelRotationAngle(0f);
-        xAxis.setAxisMinimum(0f);
-        xAxis.setAxisMaximum(12f);
+        xAxis.setAxisMinimum(-0.5f); // 막대가 레이블과 겹치지 않도록 최소값 설정
+        xAxis.setAxisMaximum(11.5f); // 막대가 레이블과 겹치지 않도록 최대값 설정
         xAxis.setDrawGridLines(false); // 그리드 라인 비활성화
-        xAxis.setDrawAxisLine(false); // 축 선 비활성화
+        xAxis.setDrawAxisLine(true); // 축 선 표시
+        xAxis.setCenterAxisLabels(true); // 레이블을 축의 중심에 맞추기
 
         // YAxis 설정 (일기 작성 횟수)
         YAxis leftAxis = barChart.getAxisLeft();
         leftAxis.setDrawGridLines(false); // 그리드 라인 비활성화
-        leftAxis.setDrawAxisLine(false); // 축 선 비활성화
+        leftAxis.setDrawAxisLine(true); // 축 선 표시
         leftAxis.setDrawLabels(true); // 레이블 표시
         leftAxis.setAxisMaximum(35f); // 최대값 설정
         leftAxis.setAxisMinimum(0f); // 최소값 설정
@@ -164,6 +165,7 @@ public class MonthlyStatActivity extends AppCompatActivity {
         barChart.setDrawValueAboveBar(true); // 막대 위에 값 표시
         barChart.setFitBars(true); // 막대를 맞추기
         barChart.setNoDataText("No data available"); // 데이터 없음 텍스트
+        barChart.setDrawBorders(false); // 차트 경계선 비활성화
 
         // 클릭 리스너 설정
         barChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -173,7 +175,8 @@ public class MonthlyStatActivity extends AppCompatActivity {
                     BarEntry barEntry = (BarEntry) e;
                     int monthIndex = (int) barEntry.getX();
                     int count = (int) barEntry.getY();
-                    Toast.makeText(MonthlyStatActivity.this, getMonthName(monthIndex) + "의 일기 작성 횟수: " + count, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MonthlyStatActivity.this, getMonthName(monthIndex) + "월의 일기 : " + count+"회", Toast.LENGTH_SHORT).show();
+
                 }
             }
 
@@ -190,6 +193,6 @@ public class MonthlyStatActivity extends AppCompatActivity {
 
     private String getMonthName(int monthIndex) {
         String[] months = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
-        return months[monthIndex - 1];
+        return months[monthIndex];
     }
 }
