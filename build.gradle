@@ -1,0 +1,22 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        // JitPack 저장소 추가
+        maven { url 'https://jitpack.io' }
+
+    }
+    dependencies {
+        
+        classpath 'com.google.gms:google-services:4.3.15' // 최신 버전 확인 필요
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        // JitPack 저장소 추가
+        maven { url 'https://jitpack.io' }
+    }
+}

@@ -1,0 +1,24 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Spinner
+        android:id="@+id/yearSpinner"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:padding="12dp"
+        android:background="@drawable/spinner_background"
+        android:spinnerMode="dropdown"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+
+    <com.github.mikephil.charting.charts.HorizontalBarChart
+        android:id="@+id/barChart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/yearSpinner"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>
