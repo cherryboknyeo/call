@@ -1,4 +1,3 @@
-// MyPageActivity.java
 package com.example.photothis;
 
 import android.content.Intent;
@@ -18,6 +17,7 @@ public class MyPageActivity extends AppCompatActivity {
         Button calendarButton = findViewById(R.id.calendarButton);
         Button todoListButton = findViewById(R.id.todoListButton);
         Button statisticsButton = findViewById(R.id.statisticsButton);
+        Button diarySummaryButton = findViewById(R.id.diarySummaryButton);  // 요약 버튼
 
         calendarButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,6 +39,14 @@ public class MyPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MyPageActivity.this, MonthlyStatActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        diarySummaryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyPageActivity.this, DiarySummaryActivity.class);
                 startActivity(intent);
             }
         });

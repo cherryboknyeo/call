@@ -12,7 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -34,7 +34,7 @@ import java.util.Calendar;
 public class MonthlyStatActivity extends AppCompatActivity {
 
     private Spinner yearSpinner;
-    private BarChart barChart; // BarChart 사용
+    private HorizontalBarChart barChart;
     private int selectedYear;
     private DatabaseReference databaseReference;
 
@@ -123,7 +123,7 @@ public class MonthlyStatActivity extends AppCompatActivity {
                 barChart.setData(barData);
                 barChart.invalidate();
 
-                configureChart();
+                configureChart(); // 차트 다시 설정
             }
 
             @Override
@@ -139,14 +139,15 @@ public class MonthlyStatActivity extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // X축을 아래쪽에 배치
         xAxis.setGranularity(1f); // 1 단위로 눈금 표시
         xAxis.setGranularityEnabled(true);
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(getMonthLabels()));
-        xAxis.setLabelCount(12, true);
-        xAxis.setLabelRotationAngle(0f);
-        xAxis.setAxisMinimum(-0.5f); // 막대가 레이블과 겹치지 않도록 최소값 설정
-        xAxis.setAxisMaximum(11.5f); // 막대가 레이블과 겹치지 않도록 최대값 설정
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(getMonthLabels())); // 레이블을 "1월", "2월" 형태로 설정
+        xAxis.setLabelCount(12, true); // 레이블 개수 설정
+        xAxis.setLabelRotationAngle(0f); // 레이블 회전 각도 조정 (0도)
+        xAxis.setAxisMinimum(0f); // X축 최소값 설정
+        xAxis.setAxisMaximum(11f); // X축 최대값 설정
         xAxis.setDrawGridLines(false); // 그리드 라인 비활성화
         xAxis.setDrawAxisLine(true); // 축 선 표시
-        xAxis.setCenterAxisLabels(true); // 레이블을 축의 중심에 맞추기
+
+        
 
         // YAxis 설정 (일기 작성 횟수)
         YAxis leftAxis = barChart.getAxisLeft();
@@ -175,8 +176,7 @@ public class MonthlyStatActivity extends AppCompatActivity {
                     BarEntry barEntry = (BarEntry) e;
                     int monthIndex = (int) barEntry.getX();
                     int count = (int) barEntry.getY();
-                    Toast.makeText(MonthlyStatActivity.this, getMonthName(monthIndex) + "월의 일기 : " + count+"회", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(MonthlyStatActivity.this, getMonthName(monthIndex) + "의 일기 : " + count + "회", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -188,11 +188,11 @@ public class MonthlyStatActivity extends AppCompatActivity {
     }
 
     private String[] getMonthLabels() {
-        return new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+        return new String[]{"1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"};
     }
 
     private String getMonthName(int monthIndex) {
-        String[] months = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+        String[] months = {"1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"};
         return months[monthIndex];
     }
 }

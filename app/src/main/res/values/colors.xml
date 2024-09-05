@@ -9,5 +9,6 @@
     <color name="transparent_black">#33000000</color>
     <color name="colorAccent">#FF3D78</color>
     <color name="barChartColor">#314383</color>
-
+    <color name="monthColor">#FF1C89</color>
 </resources>
+
