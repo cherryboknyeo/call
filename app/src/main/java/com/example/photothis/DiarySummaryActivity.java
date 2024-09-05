@@ -13,9 +13,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -79,26 +84,51 @@ public class DiarySummaryActivity extends AppCompatActivity {
         OpenAIService openAIService = RetrofitClient.getRetrofitInstance(apiKey)
                 .create(OpenAIService.class);
 
-        String prompt = "한달치 일기를 요약해. 사건과 날짜를 나열하지 말고 가장 중요해보이는 사건을 찾아서 공간과 감정 위주로 200자 이내의 글로 요약해봐:\n" + diaryText;
-        CompletionRequest request = new CompletionRequest(prompt, 200, 0.7);
+        List<Map<String, String>> messages = new ArrayList<>();
+        Map<String, String> message = new HashMap<>();
+        message.put("role", "user");
+        message.put("content", "한 달치 일기를 바탕으로 가장 중요해 보이는 사건을 찾아서 주된 공간, 감정과 경험 위주로 한글 200자 이내로 요약해 주세요: \n" + diaryText);
+        messages.add(message);
 
-        Call<CompletionResponse> call = openAIService.summarizeText(request);
-        call.enqueue(new Callback<CompletionResponse>() {
+        ChatCompletionRequest request = new ChatCompletionRequest("gpt-3.5-turbo", messages, 0.7);
+
+        Call<ChatCompletionResponse> call = openAIService.getChatCompletion(request);
+        call.enqueue(new Callback<ChatCompletionResponse>() {
             @Override
-            public void onResponse(Call<CompletionResponse> call, Response<CompletionResponse> response) {
+            public void onResponse(Call<ChatCompletionResponse> call, Response<ChatCompletionResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    String summary = response.body().getChoices().get(0).getText();
+                    // 수정된 코드
+                    String summary = response.body().getChoices().get(0).getMessage().get("content");
                     TextView summaryBox = findViewById(R.id.summaryBox);
                     summaryBox.setText(summary);
                 } else {
-                    Toast.makeText(DiarySummaryActivity.this, "요약을 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DiarySummaryActivity.this, "요약 실패. 응답 코드: " + response.code(), Toast.LENGTH_SHORT).show();
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Toast.makeText(DiarySummaryActivity.this, "오류 메시지: " + errorBody, Toast.LENGTH_LONG).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<CompletionResponse> call, Throwable t) {
+            public void onFailure(Call<ChatCompletionResponse> call, Throwable t) {
                 Toast.makeText(DiarySummaryActivity.this, "API 호출 실패: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
+
+
+
+
+
+
+
 }
+
+

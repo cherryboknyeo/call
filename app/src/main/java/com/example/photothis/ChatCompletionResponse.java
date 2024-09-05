@@ -1,8 +1,9 @@
 package com.example.photothis;
 
 import java.util.List;
+import java.util.Map;
 
-public class CompletionResponse {
+public class ChatCompletionResponse {
     private List<Choice> choices;
 
     public List<Choice> getChoices() {
@@ -14,14 +15,15 @@ public class CompletionResponse {
     }
 
     public static class Choice {
-        private String text;
+        private Map<String, String> message;
 
-        public String getText() {
-            return text;
+        public Map<String, String> getMessage() {
+            return message;
         }
 
-        public void setText(String text) {
-            this.text = text;
+        public void setMessage(Map<String, String> message) {
+            this.message = message;
         }
     }
 }
+
