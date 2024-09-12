@@ -1,6 +1,7 @@
 package com.example.photothis;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,7 +80,7 @@ public class DiarySummaryActivity extends AppCompatActivity {
     }
 
     private void summarizeDiaryEntries(String diaryText) {
-        String apiKey = "abc"; // 발급받은 OpenAI API 키
+        String apiKey = "abc"; // 실제 API 키로 교체하세요
 
         OpenAIService openAIService = RetrofitClient.getRetrofitInstance(apiKey)
                 .create(OpenAIService.class);
@@ -87,26 +88,28 @@ public class DiarySummaryActivity extends AppCompatActivity {
         List<Map<String, String>> messages = new ArrayList<>();
         Map<String, String> message = new HashMap<>();
         message.put("role", "user");
-        message.put("content", "한 달치 일기를 바탕으로 가장 중요해 보이는 사건을 찾아서 주된 공간, 감정과 경험 위주로 한글 200자 이내로 요약해 주세요: \n" + diaryText);
+        message.put("content", "한 달치 일기를 요약해줘 조건은 다음과 같아. 1. 가장 중요해보이는 사건을 바탕으로 요약할 것. 단, 그것을 서두에서 직접적으로 언급하면 안 돼. 2. 주된 공간, 감정과 경험 위주로 요약할 것. 3. 존댓말을 사용해 한글 200자 이내로 요약할 것: \n" + diaryText);
         messages.add(message);
 
-        ChatCompletionRequest request = new ChatCompletionRequest("gpt-3.5-turbo", messages, 0.7);
+        ChatCompletionRequest request = new ChatCompletionRequest("gpt-4", messages, 0.7);
 
         Call<ChatCompletionResponse> call = openAIService.getChatCompletion(request);
         call.enqueue(new Callback<ChatCompletionResponse>() {
             @Override
             public void onResponse(Call<ChatCompletionResponse> call, Response<ChatCompletionResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // 수정된 코드
                     String summary = response.body().getChoices().get(0).getMessage().get("content");
                     TextView summaryBox = findViewById(R.id.summaryBox);
                     summaryBox.setText(summary);
                 } else {
-                    Toast.makeText(DiarySummaryActivity.this, "요약 실패. 응답 코드: " + response.code(), Toast.LENGTH_SHORT).show();
+                    // 응답 코드와 오류 메시지를 로그로 출력
+                    String errorMsg = "요약 실패. 응답 코드: " + response.code();
+                    Toast.makeText(DiarySummaryActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
                     if (response.errorBody() != null) {
                         try {
                             String errorBody = response.errorBody().string();
                             Toast.makeText(DiarySummaryActivity.this, "오류 메시지: " + errorBody, Toast.LENGTH_LONG).show();
+                            Log.e("API Error", errorBody); // 로그에 오류 메시지 출력
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -116,10 +119,14 @@ public class DiarySummaryActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ChatCompletionResponse> call, Throwable t) {
-                Toast.makeText(DiarySummaryActivity.this, "API 호출 실패: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                String errorMsg = "API 호출 실패: " + t.getMessage();
+                Toast.makeText(DiarySummaryActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                Log.e("API Failure", t.getMessage()); // 로그에 실패 메시지 출력
             }
         });
+
     }
+
 
 
 

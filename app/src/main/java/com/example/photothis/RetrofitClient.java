@@ -20,7 +20,11 @@ public class RetrofitClient {
                                 .build();
                         return chain.proceed(request);
                     })
+                    .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS) // 연결 타임아웃
+                    .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)   // 쓰기 타임아웃
+                    .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)    // 읽기 타임아웃
                     .build();
+
 
             retrofit = new Retrofit.Builder()
                     .baseUrl("https://api.openai.com/")
@@ -30,4 +34,5 @@ public class RetrofitClient {
         }
         return retrofit;
     }
+
 }
