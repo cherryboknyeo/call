@@ -14,12 +14,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -37,9 +35,11 @@ public class DiarySummaryActivity extends AppCompatActivity {
         TextView titleTextView = findViewById(R.id.titleTextView);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -1); // 한 달 전
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월의", Locale.getDefault());
-        String lastMonth = sdf.format(calendar.getTime());
-        titleTextView.setText(lastMonth + " 일기 요약");
+
+        // 월을 1 더한 후 0 없이 출력
+        int lastMonth = calendar.get(Calendar.MONTH) + 1;
+        String title = calendar.get(Calendar.YEAR) + "년 " + lastMonth + "월의 일기 요약";
+        titleTextView.setText(title);
 
         // 제목 색상 검은색으로 변경
         titleTextView.setTextColor(getResources().getColor(android.R.color.black));
@@ -48,15 +48,23 @@ public class DiarySummaryActivity extends AppCompatActivity {
         loadLastMonthDiaryEntries();
     }
 
-
     private void loadLastMonthDiaryEntries() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -1);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
-        String lastMonth = sdf.format(calendar.getTime());
+        calendar.add(Calendar.MONTH, -1); // 한 달 전
+
+        // 정확한 날짜 형식을 위해 1을 더함 (월은 0부터 시작)
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+
+        // 월과 일을 항상 2자리로 맞추기
+        String formattedMonth = (month < 10 ? "0" + month : String.valueOf(month));
+        String startDate = year + "-" + formattedMonth + "-01"; // 시작일
+        String endDate = year + "-" + formattedMonth + "-31"; // 끝일
 
         DatabaseReference diaryRef = FirebaseDatabase.getInstance().getReference().child("diary_entries");
-        diaryRef.orderByChild("date").startAt(lastMonth + "-01").endAt(lastMonth + "-31")
+        diaryRef.orderByChild("date")
+                .startAt(startDate)
+                .endAt(endDate)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -78,6 +86,8 @@ public class DiarySummaryActivity extends AppCompatActivity {
                 });
     }
 
+
+
     private void summarizeDiaryEntries(String diaryText) {
         String apiKey = "abc"; // 발급받은 OpenAI API 키
 
@@ -87,7 +97,7 @@ public class DiarySummaryActivity extends AppCompatActivity {
         List<Map<String, String>> messages = new ArrayList<>();
         Map<String, String> message = new HashMap<>();
         message.put("role", "user");
-        message.put("content", "한 달치 일기를 바탕으로 가장 중요해 보이는 사건을 찾아서 주된 공간, 감정과 경험 위주로 한글 200자 이내로 요약해 주세요: \n" + diaryText);
+        message.put("content", "한 달치 일기를 요약해줘 조건은 다음과 같아. 1. 가장 중요해보이는 사건을 바탕으로 요약할 것. 단, 그것을 서두에서 직접적으로 언급하면 안 됨. 2. 주된 공간, 감정과 경험 위주로 요약할 것. 3. 존댓말을 사용하여 한글 200자 이내로 요약할 것: \n" + diaryText);
         messages.add(message);
 
         ChatCompletionRequest request = new ChatCompletionRequest("gpt-3.5-turbo", messages, 0.7);
@@ -121,14 +131,4 @@ public class DiarySummaryActivity extends AppCompatActivity {
         });
     }
 
-
-
-
-
-
-
-
-
 }
-
-
