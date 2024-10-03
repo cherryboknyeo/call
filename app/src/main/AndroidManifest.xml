@@ -46,6 +46,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".DiarySummaryActivity" />
+        <activity android:name=".SetReminderActivity" />
+        <activity android:name=".ContactAdminActivity" />
+        <activity android:name=".DisconnectNaverActivity" />
+
 
     </application>
 

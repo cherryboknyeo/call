@@ -2,4 +2,5 @@
 <resources>
     <item name="yearSpinner" type="id" />
     <item name="summaryTextView" type="id" />
+    <item name="diaryReminderTextView" type="id" />
 </resources>

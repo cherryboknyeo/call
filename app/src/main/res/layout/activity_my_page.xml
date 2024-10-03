@@ -12,6 +12,18 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp" />
 
+    <!-- '알림설정' 버튼 -->
+    <Button
+        android:id="@+id/setReminderButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="알림설정"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/myPageTitle"
+        android:layout_marginTop="24dp"
+        android:background="?attr/selectableItemBackground"
+        android:textColor="#000000" />
+
     <!-- '통계' 버튼 -->
     <Button
         android:id="@+id/statisticsButton"
@@ -19,7 +31,7 @@
         android:layout_height="wrap_content"
         android:text="통계"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/myPageTitle"
+        android:layout_below="@id/setReminderButton"
         android:layout_marginTop="24dp"
         android:background="?attr/selectableItemBackground"
         android:textColor="#000000" />
@@ -36,7 +48,32 @@
         android:background="?attr/selectableItemBackground"
         android:textColor="#000000" />
 
-    <!-- 여기에 마이페이지 관련 UI 요소를 추가 -->
+    <!-- '문의하기' 버튼 -->
+    <Button
+        android:id="@+id/contactAdminButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="문의하기"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/diarySummaryButton"
+        android:layout_marginTop="24dp"
+        android:background="?attr/selectableItemBackground"
+        android:textColor="#000000" />
+
+    <!-- '네이버 연동 해제' 버튼 -->
+    <Button
+        android:id="@+id/disconnectNaverButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="네이버 연동 해제"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/contactAdminButton"
+        android:layout_marginTop="24dp"
+        android:background="?attr/selectableItemBackground"
+        android:textColor="#000000" />
+
+
+
 
     <!-- 메뉴 바 추가 -->
     <LinearLayout
